@@ -28,7 +28,7 @@ const SignIn = () => {
             className="w-[115px] h-[95px]"
           />
 
-          <Text className="text-xl text-white text-semibold mt-5 font-psemibold">This is a test Log In Screen</Text>
+          <Text className="text-xl text-white text-semibold mt-5 font-psemibold">This is a test Sign In Screen</Text>
           <FormField
             title="Email"
             value={form.email}
