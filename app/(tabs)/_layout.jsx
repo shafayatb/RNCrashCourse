@@ -2,6 +2,7 @@ import { View, Text, Image } from 'react-native'
 import { Tabs, Redirect } from 'expo-router'
 import { icons } from '../../constants';
 import React from 'react'
+import { StatusBar } from 'expo-status-bar';
 
 const TabIcon = ({ icon, color, name, focused }) => {
   return (
@@ -12,7 +13,7 @@ const TabIcon = ({ icon, color, name, focused }) => {
         tintColor={color}
         className="w-6 h-6"
       />
-      <Text className={`${focused ? 'font-psemibold' : 'font-pregular'} text-xs` } style={{color: color}}>
+      <Text className={`${focused ? 'font-psemibold' : 'font-pregular'} text-xs`} style={{ color: color }}>
         {name}
       </Text>
     </View>
@@ -99,6 +100,7 @@ const TabsLayout = () => {
           }}
         />
       </Tabs>
+      <StatusBar backgroundColor="#161622" style='light' />
     </>
   )
 }
