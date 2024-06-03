@@ -4,6 +4,7 @@ import { Redirect, router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { images } from '../constants';
 import CustomButton from '../components/CustomButton';
+import Loader from '../components/Loader';
 import { useGlobalContext } from '../context/GlobalProvider';
 
 export default function App() {
@@ -13,6 +14,8 @@ export default function App() {
 
   return (
     <SafeAreaView className="bg-primary h-full">
+      <Loader isLoading={isLoading} />
+
       <ScrollView contentContainerStyle={{
         height: '100%'
       }}>
