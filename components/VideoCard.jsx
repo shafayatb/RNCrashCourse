@@ -1,11 +1,19 @@
 import { View, Text, Image, TouchableOpacity } from 'react-native'
 import React, { useState } from 'react'
 import { icons } from '../constants'
+import TextWithIcon from '../components/TextWithIcon'
 import { ResizeMode, Video } from 'expo-av'
+import {
+    Menu,
+    MenuOptions,
+    MenuOption,
+    MenuTrigger,
+} from 'react-native-popup-menu';
+import { useGlobalContext } from '../context/GlobalProvider';
 
-const VideoCard = ({ video: { title, thumbnail, video, creator: { username, avatar } } }) => {
+const VideoCard = ({ video: { title, thumbnail, video, creator: { $id, username, avatar } } }) => {
+    const { user } = useGlobalContext();
     const [play, setPlay] = useState(false)
-
     return (
         <View className="flex-col items-center px-4 mb-14">
             <View className="flex-row gap-3 items-start">
@@ -30,11 +38,29 @@ const VideoCard = ({ video: { title, thumbnail, video, creator: { username, avat
                     </View>
                 </View>
                 <View className="pt-2">
-                    <Image
-                        source={icons.menu}
-                        className="w-5 h-5"
-                        resizeMode='contain'
-                    />
+                    <Menu>
+                        <MenuTrigger>
+                            <Image
+                                source={icons.menu}
+                                className="w-5 h-5"
+                                resizeMode='contain'
+                            />
+                        </MenuTrigger>
+                        <MenuOptions customStyles={{ optionsContainer: { backgroundColor: "#1E1E2D", borderRadius: 10 } }}>
+                            <MenuOption onSelect={() => { }}>
+                                <TextWithIcon
+                                    icon={icons.bookmark}
+                                    title="Save"
+                                />
+                            </MenuOption>
+                            {user.$id === $id ? (<MenuOption onSelect={() => { }} >
+                                <TextWithIcon
+                                    icon={icons.deleteIcon}
+                                    title="Delete"
+                                />
+                            </MenuOption>) : (<></>)}
+                        </MenuOptions>
+                    </Menu>
                 </View>
             </View>
 
