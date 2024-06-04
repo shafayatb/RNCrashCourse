@@ -53,7 +53,7 @@ const VideoCard = ({ video: { title, thumbnail, video, creator: { $id, username,
                                     title="Save"
                                 />
                             </MenuOption>
-                            {user.$id === $id ? (<MenuOption onSelect={() => { }} >
+                            {user?.$id === $id ? (<MenuOption onSelect={() => { }} >
                                 <TextWithIcon
                                     icon={icons.deleteIcon}
                                     title="Delete"
