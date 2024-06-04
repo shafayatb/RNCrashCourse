@@ -10,8 +10,6 @@ import { useGlobalContext } from '../context/GlobalProvider';
 export default function App() {
   const { isLoading, isLoggedIn } = useGlobalContext();
 
-  if(!isLoading && isLoggedIn) return <Redirect href={"/home"} />
-
   return (
     <SafeAreaView className="bg-primary h-full">
       <Loader isLoading={isLoading} />
@@ -51,7 +49,7 @@ export default function App() {
 
           <CustomButton
             title="Continue to Learn More"
-            handlePress={() => { 
+            handlePress={() => {
               router.push('/sign-in')
             }}
             containeStyles="w-full mt-7"
@@ -61,6 +59,11 @@ export default function App() {
       </ScrollView>
 
       <StatusBar backgroundColor="#161622" style='light' />
+      {!isLoading && isLoggedIn ? (
+        <Redirect href={"/home"} />
+      ) : (<></>)
+
+      }
     </SafeAreaView>
   );
 }
