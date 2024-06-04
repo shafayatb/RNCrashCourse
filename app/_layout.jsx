@@ -1,4 +1,3 @@
-import { StyleSheet, Text, View } from 'react-native'
 import React, { useEffect } from 'react'
 import { SplashScreen, Stack } from 'expo-router';
 import { useFonts } from 'expo-font';
@@ -8,6 +7,7 @@ import { MenuProvider } from 'react-native-popup-menu';
 SplashScreen.preventAutoHideAsync();
 
 const RootLayout = () => {
+    
     const [fontsLoaded, error] = useFonts({
         "Poppins-Black": require("../assets/fonts/Poppins-Black.ttf"),
         "Poppins-Bold": require("../assets/fonts/Poppins-Bold.ttf"),
@@ -34,22 +34,22 @@ const RootLayout = () => {
                 <Stack>
                     <Stack.Screen
                         name="index"
-                        options={{ headerShown: false }}
+                        options={{ headerShown: false, animation: "slide_from_right", }}
                     />
 
                     <Stack.Screen
                         name="(auth)"
-                        options={{ headerShown: false }}
+                        options={{ headerShown: false, animation: "slide_from_right", }}
                     />
 
                     <Stack.Screen
                         name="(tabs)"
-                        options={{ headerShown: false }}
+                        options={{ headerShown: false, animation: "slide_from_right", }}
                     />
 
                     <Stack.Screen
                         name="search/[query]"
-                        options={{ headerShown: false }}
+                        options={{ headerShown: false, animation: "slide_from_right", }}
                     />
                 </Stack>
             </GlobalProvider>
