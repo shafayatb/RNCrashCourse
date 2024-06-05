@@ -11,7 +11,7 @@ import {
 } from 'react-native-popup-menu';
 import { useGlobalContext } from '../context/GlobalProvider';
 
-const VideoCard = ({ video: { title, thumbnail, video, creator: { $id, username, avatar } } }) => {
+const VideoCard = React.memo(({ video: { title, thumbnail, video, creator: { $id, username, avatar } } }) => {
     const { user } = useGlobalContext();
     const [play, setPlay] = useState(false)
     return (
@@ -98,6 +98,6 @@ const VideoCard = ({ video: { title, thumbnail, video, creator: { $id, username,
             )}
         </View>
     )
-}
+})
 
 export default VideoCard
