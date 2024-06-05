@@ -10,20 +10,12 @@ import useAppWrite from '../../lib/useAppWrite';
 import VideoCard from '../../components/VideoCard';
 import { useGlobalContext } from '../../context/GlobalProvider';
 
-const removeItemOnce = (arr, value) => {
-  var index = arr.indexOf(value);
-  if (index > -1) {
-    arr.splice(index, 1);
-  }
-  return arr;
-}
-
 const Home = () => {
   const { user } = useGlobalContext();
 
-  const { data: posts, refetch: postRefecth } = useAppWrite(getAllPosts);
+  const { data: posts, refetch: postRefecth, setData: setPostData } = useAppWrite(getAllPosts);
 
-  const { data: latestPosts, refetch: latestRefetch } = useAppWrite(getLatestPosts);
+  const { data: latestPosts, refetch: latestRefetch, setData: setLatestPostData } = useAppWrite(getLatestPosts);
 
   const [refreshing, setRefreshing] = useState(false);
 
@@ -31,21 +23,40 @@ const Home = () => {
   const onRefresh = async () => {
     setRefreshing(true);
     await postRefecth();
+    await latestRefetch();
     setRefreshing(false);
   }
 
   const deletePost = async (item) => {
     try {
+      setPostData((data) => {
+        return data.filter((post) => post.$id !== item.$id)
+      })
+      setLatestPostData((data) => {
+        return data.filter((post) => post.$id !== item.$id)
+      })
       await deletePosts(item)
       Alert.alert('Success', 'Post deleted sucessfully')
-      await postRefecth();
+      //await postRefecth();
       await latestRefetch();
     } catch (error) {
       console.log(error);
       throw new Error(error);
     }
-    
+
   }
+
+  const deletePostConfirmation = (item) => {
+    Alert.alert(
+      "Are you sure?",
+      "Are you sure you want to delete this post?",
+      [
+        { text: "Yes", onPress: async () => await deletePost(item) },
+        { text: "Cancel" }
+      ]
+    )
+  }
+
 
   return (
     <SafeAreaView className="bg-primary h-full">
@@ -55,7 +66,7 @@ const Home = () => {
         renderItem={({ item }) => (
           <VideoCard
             video={item}
-            deletePressed={()=>deletePost(item)}
+            deletePressed={() => deletePostConfirmation(item)}
           />
         )}
         ListHeaderComponent={() => (
