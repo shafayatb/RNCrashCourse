@@ -5,7 +5,7 @@ import { images } from '../../constants';
 import SearchInput from '../../components/SearchInput';
 import Trending from '../../components/Trending';
 import EmptyState from '../../components/EmptyState';
-import { getAllPosts, getLatestPosts } from '../../lib/appWriteVideos';
+import { deletePosts, getAllPosts, getLatestPosts } from '../../lib/appWriteVideos';
 import useAppWrite from '../../lib/useAppWrite';
 import VideoCard from '../../components/VideoCard';
 import { useGlobalContext } from '../../context/GlobalProvider';
@@ -24,6 +24,19 @@ const Home = () => {
     setRefreshing(false);
   }
 
+  const deletePost = async (item) => {
+    try {
+      console.log(item)
+      await deletePosts(item)
+      Alert.alert('Success', 'Post deleted sucessfully')
+      await refetch();
+    } catch (error) {
+      console.log(error);
+      throw new Error(error);
+    }
+    
+  }
+
   return (
     <SafeAreaView className="bg-primary h-full">
       <FlatList
@@ -32,6 +45,7 @@ const Home = () => {
         renderItem={({ item }) => (
           <VideoCard
             video={item}
+            deletePressed={()=>deletePost(item)}
           />
         )}
         ListHeaderComponent={() => (
