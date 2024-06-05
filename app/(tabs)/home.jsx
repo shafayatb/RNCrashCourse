@@ -10,26 +10,36 @@ import useAppWrite from '../../lib/useAppWrite';
 import VideoCard from '../../components/VideoCard';
 import { useGlobalContext } from '../../context/GlobalProvider';
 
+const removeItemOnce = (arr, value) => {
+  var index = arr.indexOf(value);
+  if (index > -1) {
+    arr.splice(index, 1);
+  }
+  return arr;
+}
+
 const Home = () => {
   const { user } = useGlobalContext();
-  const { data: posts, refetch } = useAppWrite(getAllPosts);
 
-  const { data: latestPosts } = useAppWrite(getLatestPosts);
+  const { data: posts, refetch: postRefecth } = useAppWrite(getAllPosts);
+
+  const { data: latestPosts, refetch: latestRefetch } = useAppWrite(getLatestPosts);
 
   const [refreshing, setRefreshing] = useState(false);
 
+
   const onRefresh = async () => {
     setRefreshing(true);
-    await refetch();
+    await postRefecth();
     setRefreshing(false);
   }
 
   const deletePost = async (item) => {
     try {
-      console.log(item)
       await deletePosts(item)
       Alert.alert('Success', 'Post deleted sucessfully')
-      await refetch();
+      await postRefecth();
+      await latestRefetch();
     } catch (error) {
       console.log(error);
       throw new Error(error);
