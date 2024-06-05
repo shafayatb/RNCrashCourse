@@ -11,7 +11,7 @@ import {
 } from 'react-native-popup-menu';
 import { useGlobalContext } from '../context/GlobalProvider';
 
-const VideoCard = React.memo(({ video: { title, thumbnail, video, creator: { $id, username, avatar } } }) => {
+const VideoCard = React.memo(({ video: { title, thumbnail, video, creator: { $id, username, avatar } }, savePressed, deletePressed }) => {
     const { user } = useGlobalContext();
     const [play, setPlay] = useState(false)
     return (
@@ -47,13 +47,13 @@ const VideoCard = React.memo(({ video: { title, thumbnail, video, creator: { $id
                             />
                         </MenuTrigger>
                         <MenuOptions customStyles={{ optionsContainer: { backgroundColor: "#1E1E2D", borderRadius: 10 } }}>
-                            <MenuOption onSelect={() => { }}>
+                            <MenuOption onSelect={savePressed}>
                                 <TextWithIcon
                                     icon={icons.bookmark}
                                     title="Save"
                                 />
                             </MenuOption>
-                            {user?.$id === $id ? (<MenuOption onSelect={() => { }} >
+                            {user?.$id === $id ? (<MenuOption onSelect={deletePressed} >
                                 <TextWithIcon
                                     icon={icons.deleteIcon}
                                     title="Delete"
