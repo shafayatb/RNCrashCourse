@@ -1,11 +1,11 @@
-import { View, Text, FlatList, Image, RefreshControl, Alert } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { View, Text, FlatList, Image, RefreshControl } from 'react-native'
+import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { images } from '../../constants';
 import SearchInput from '../../components/SearchInput';
 import Trending from '../../components/Trending';
 import EmptyState from '../../components/EmptyState';
-import { bookmarkPosts, deletePosts, getAllPosts, getLatestPosts } from '../../lib/appWriteVideos';
+import { getAllPosts, getLatestPosts } from '../../lib/appWriteVideos';
 import useAppWrite from '../../lib/useAppWrite';
 import VideoCard from '../../components/VideoCard';
 import { useGlobalContext } from '../../context/GlobalProvider';
