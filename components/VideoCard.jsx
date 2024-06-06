@@ -11,7 +11,7 @@ import {
 } from 'react-native-popup-menu';
 import { useGlobalContext } from '../context/GlobalProvider';
 
-const VideoCard = React.memo(({ video: { title, thumbnail, video, creator: { $id, username, avatar } }, savePressed, deletePressed }) => {
+const VideoCard = React.memo(({ video: { title, thumbnail, video, bookmarked, creator: { $id, username, avatar } }, savePressed, deletePressed }) => {
     const { user } = useGlobalContext();
     const [play, setPlay] = useState(false)
     return (
@@ -50,7 +50,7 @@ const VideoCard = React.memo(({ video: { title, thumbnail, video, creator: { $id
                             <MenuOption onSelect={savePressed}>
                                 <TextWithIcon
                                     icon={icons.bookmark}
-                                    title="Save"
+                                    title={ bookmarked.some(usr => usr.$id === user.$id) ? "UnSave" : "Save"}
                                 />
                             </MenuOption>
                             {user?.$id === $id ? (<MenuOption onSelect={deletePressed} >

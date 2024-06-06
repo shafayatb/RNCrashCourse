@@ -5,7 +5,7 @@ import { images } from '../../constants';
 import SearchInput from '../../components/SearchInput';
 import Trending from '../../components/Trending';
 import EmptyState from '../../components/EmptyState';
-import { deletePosts, getAllPosts, getLatestPosts } from '../../lib/appWriteVideos';
+import { bookmarkPosts, deletePosts, getAllPosts, getLatestPosts } from '../../lib/appWriteVideos';
 import useAppWrite from '../../lib/useAppWrite';
 import VideoCard from '../../components/VideoCard';
 import { useGlobalContext } from '../../context/GlobalProvider';
@@ -25,6 +25,34 @@ const Home = () => {
     await postRefecth();
     await latestRefetch();
     setRefreshing(false);
+  }
+
+  const savePost = async (item) => {
+    try {
+      let bookmarked = item.bookmarked;
+      console.log(bookmarked)
+      console.log(bookmarked.some(usr => usr.$id === user.$id))
+      let msg = "";
+      if (bookmarked.some(usr => usr.$id === user.$id)) {
+        bookmarked = bookmarked.filter((usr) => usr.$id !== user.$id)
+        msg = "Removed Bookmark";
+      } else {
+        bookmarked.push(user);
+        msg = "Bookmarked"
+      }
+
+      setPostData((data) => {
+        return data.map(post =>
+          post.$id === item.$id ? { ...post, bookmarked } : post
+        )
+      })
+
+      await bookmarkPosts(bookmarked, item.$id, user)
+
+      Alert.alert('Success', msg)
+    } catch (error) {
+      Alert.alert('Error', 'Failed to save post')
+    }
   }
 
   const deletePost = async (item) => {
@@ -66,6 +94,7 @@ const Home = () => {
         renderItem={({ item }) => (
           <VideoCard
             video={item}
+            savePressed={() => savePost(item)}
             deletePressed={() => deletePostConfirmation(item)}
           />
         )}
