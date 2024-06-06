@@ -27,35 +27,15 @@ const Home = () => {
     setRefreshing(false);
   }
 
-  const savePost = async (item) => {
-    try {
-      let bookmarked = item.bookmarked;
-      console.log(bookmarked)
-      console.log(bookmarked.some(usr => usr.$id === user.$id))
-      let msg = "";
-      if (bookmarked.some(usr => usr.$id === user.$id)) {
-        bookmarked = bookmarked.filter((usr) => usr.$id !== user.$id)
-        msg = "Removed Bookmark";
-      } else {
-        bookmarked.push(user);
-        msg = "Bookmarked"
-      }
-
-      setPostData((data) => {
-        return data.map(post =>
-          post.$id === item.$id ? { ...post, bookmarked } : post
-        )
-      })
-
-      await bookmarkPosts(bookmarked, item.$id, user)
-
-      Alert.alert('Success', msg)
-    } catch (error) {
-      Alert.alert('Error', 'Failed to save post')
-    }
+  const updateBookmarkedItemInList = (item, bookmarked) => {
+    setPostData((data) => {
+      return data.map(post =>
+        post.$id === item.$id ? { ...post, bookmarked } : post
+      )
+    })
   }
 
-  const deletePost = async (item) => {
+  const removeDeletedPostFromList = async (item) => {
     try {
       setPostData((data) => {
         return data.filter((post) => post.$id !== item.$id)
@@ -63,28 +43,12 @@ const Home = () => {
       setLatestPostData((data) => {
         return data.filter((post) => post.$id !== item.$id)
       })
-      await deletePosts(item)
-      Alert.alert('Success', 'Post deleted sucessfully')
-      //await postRefecth();
       await latestRefetch();
     } catch (error) {
       console.log(error);
       throw new Error(error);
     }
-
   }
-
-  const deletePostConfirmation = (item) => {
-    Alert.alert(
-      "Are you sure?",
-      "Are you sure you want to delete this post?",
-      [
-        { text: "Yes", onPress: async () => await deletePost(item) },
-        { text: "Cancel" }
-      ]
-    )
-  }
-
 
   return (
     <SafeAreaView className="bg-primary h-full">
@@ -94,8 +58,8 @@ const Home = () => {
         renderItem={({ item }) => (
           <VideoCard
             video={item}
-            savePressed={() => savePost(item)}
-            deletePressed={() => deletePostConfirmation(item)}
+            savePressed={(bookmarked) => updateBookmarkedItemInList(item, bookmarked)}
+            deletePressed={() => removeDeletedPostFromList(item)}
           />
         )}
         ListHeaderComponent={() => (

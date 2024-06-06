@@ -1,4 +1,4 @@
-import { View, Text, Image, TouchableOpacity } from 'react-native'
+import { View, Text, Image, TouchableOpacity, Alert } from 'react-native'
 import React, { useState } from 'react'
 import { icons } from '../constants'
 import TextWithIcon from '../components/TextWithIcon'
@@ -10,10 +10,56 @@ import {
     MenuTrigger,
 } from 'react-native-popup-menu';
 import { useGlobalContext } from '../context/GlobalProvider';
+import { bookmarkPosts, deletePosts } from '../lib/appWriteVideos'
 
-const VideoCard = React.memo(({ video: { title, thumbnail, video, bookmarked, creator: { $id, username, avatar } }, savePressed, deletePressed }) => {
+const VideoCard = React.memo(({ video: { $id: videoID, title, thumbnail, thumbnailID, videoFileID, video, bookmarked, creator: { $id, username, avatar } }, savePressed, deletePressed }) => {
     const { user } = useGlobalContext();
     const [play, setPlay] = useState(false)
+
+    const savePost = async () => {
+        try {
+            let bookmarkedUsers = bookmarked;
+            let msg = "";
+            if (bookmarkedUsers.some(usr => usr.$id === user.$id)) {
+                bookmarkedUsers = bookmarkedUsers.filter((usr) => usr.$id !== user.$id)
+                msg = "Removed Bookmark";
+            } else {
+                bookmarkedUsers.push(user);
+                msg = "Bookmarked"
+            }
+            savePressed(bookmarkedUsers)
+
+            await bookmarkPosts(bookmarkedUsers, videoID, user)
+
+            Alert.alert('Success', msg)
+        } catch (error) {
+            Alert.alert('Error', 'Failed to save post')
+        }
+    }
+
+    const deletePost = async () => {
+        try {
+            deletePressed();
+            await deletePosts(thumbnailID, videoFileID, videoID)
+            Alert.alert('Success', 'Post deleted sucessfully')
+        } catch (error) {
+            console.log(error);
+            throw new Error(error);
+        }
+
+    }
+
+    const deletePostConfirmation = () => {
+        Alert.alert(
+            "Are you sure?",
+            "Are you sure you want to delete this post?",
+            [
+                { text: "Yes", onPress: async () => await deletePost() },
+                { text: "Cancel" }
+            ]
+        )
+    }
+
     return (
         <View className="flex-col items-center px-4 mb-14">
             <View className="flex-row gap-3 items-start">
@@ -47,13 +93,13 @@ const VideoCard = React.memo(({ video: { title, thumbnail, video, bookmarked, cr
                             />
                         </MenuTrigger>
                         <MenuOptions customStyles={{ optionsContainer: { backgroundColor: "#1E1E2D", borderRadius: 10 } }}>
-                            <MenuOption onSelect={savePressed}>
+                            <MenuOption onSelect={() => savePost()}>
                                 <TextWithIcon
                                     icon={icons.bookmark}
-                                    title={ bookmarked.some(usr => usr.$id === user.$id) ? "UnSave" : "Save"}
+                                    title={bookmarked.some(usr => usr.$id === user.$id) ? "UnSave" : "Save"}
                                 />
                             </MenuOption>
-                            {user?.$id === $id ? (<MenuOption onSelect={deletePressed} >
+                            {user?.$id === $id ? (<MenuOption onSelect={() => deletePostConfirmation()} >
                                 <TextWithIcon
                                     icon={icons.deleteIcon}
                                     title="Delete"
