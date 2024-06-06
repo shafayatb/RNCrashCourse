@@ -1,5 +1,5 @@
-import { View, Text, FlatList } from 'react-native';
-import React, { useEffect } from 'react';
+import { View, Text, FlatList, RefreshControl } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import SearchInput from '../../components/SearchInput';
 import EmptyState from '../../components/EmptyState';
@@ -10,12 +10,32 @@ import { useLocalSearchParams } from 'expo-router';
 
 const Search = () => {
   const { query } = useLocalSearchParams();
-  const { data: posts, refetch } = useAppWrite(() => searchPosts(query));
-  console.log(posts);
+  const { data: posts, refetch, setData } = useAppWrite(() => searchPosts(query));
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await refetch();
+    setRefreshing(false);
+  }
 
   useEffect(() => {
     refetch()
   }, [query])
+
+  const updateBookmarkedItemInList = (item, bookmarked) => {
+    setData((data) => {
+      return data.map(post =>
+        post.$id === item.$id ? { ...post, bookmarked } : post
+      )
+    })
+  }
+
+  const removeDeletedPostFromList = (item) => {
+    setData((data) => {
+      return data.filter((post) => post.$id !== item.$id)
+    })
+  }
 
 
   return (
@@ -26,6 +46,8 @@ const Search = () => {
         renderItem={({ item }) => (
           <VideoCard
             video={item}
+            savePressed={(bookmarked) => updateBookmarkedItemInList(item, bookmarked)}
+            deletePressed={() => removeDeletedPostFromList(item)}
           />
         )}
         ListHeaderComponent={() => (
@@ -49,6 +71,12 @@ const Search = () => {
             subTitle="No videos found for this search query"
           />
         )}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+          />
+        }
       />
     </SafeAreaView>
   )

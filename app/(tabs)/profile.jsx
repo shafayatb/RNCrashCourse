@@ -1,5 +1,5 @@
-import { View, Text, FlatList, Image, TouchableOpacity } from 'react-native';
-import React, { useEffect } from 'react';
+import { View, FlatList, Image, TouchableOpacity, RefreshControl } from 'react-native';
+import React, { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import EmptyState from '../../components/EmptyState';
 import { getUserPosts } from '../../lib/appWriteVideos';
@@ -13,14 +13,37 @@ import { signOut } from '../../lib/appwriteUser';
 
 const Profile = () => {
   const { user, setUser, setIsLoggedIn } = useGlobalContext();
-  const { data: posts, refetch } = useAppWrite(() => getUserPosts(user.$id));
-  
+  const { data: posts, refetch, setData } = useAppWrite(() => getUserPosts(user.$id));
+
+  const [refreshing, setRefreshing] = useState(false);
+
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await refetch();
+    setRefreshing(false);
+  }
+
   const logout = async () => {
     await signOut();
     setUser(null);
     setIsLoggedIn(false);
 
     router.replace('/sign-in');
+  }
+
+  const updateBookmarkedItemInList = (item, bookmarked) => {
+    setData((data) => {
+      return data.map(post =>
+        post.$id === item.$id ? { ...post, bookmarked } : post
+      )
+    })
+  }
+
+  const removeDeletedPostFromList = (item) => {
+    setData((data) => {
+      return data.filter((post) => post.$id !== item.$id)
+    })
   }
 
   return (
@@ -31,6 +54,8 @@ const Profile = () => {
         renderItem={({ item }) => (
           <VideoCard
             video={item}
+            savePressed={(bookmarked) => updateBookmarkedItemInList(item, bookmarked)}
+            deletePressed={() => removeDeletedPostFromList(item)}
           />
         )}
         ListHeaderComponent={() => (
@@ -75,14 +100,19 @@ const Profile = () => {
 
             </View>
           </View>
-        )
-        }
+        )}
         ListEmptyComponent={() => (
           <EmptyState
             title="No Video Found"
             subTitle="Create your first video."
           />
         )}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+          />
+        }
       />
     </SafeAreaView >
   )
