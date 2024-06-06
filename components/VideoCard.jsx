@@ -20,16 +20,16 @@ const VideoCard = React.memo(({ video: { $id: videoID, title, thumbnail, thumbna
         try {
             let bookmarkedUsers = bookmarked;
             let msg = "";
-            if (bookmarkedUsers.some(usr => usr.$id === user.$id)) {
-                bookmarkedUsers = bookmarkedUsers.filter((usr) => usr.$id !== user.$id)
+            if (bookmarkedUsers.some(usr => usr === user.$id)) {
+                bookmarkedUsers = bookmarkedUsers.filter((usr) => usr !== user.$id)
                 msg = "Removed Bookmark";
             } else {
-                bookmarkedUsers.push(user);
+                bookmarkedUsers.push(user.$id);
                 msg = "Bookmarked"
             }
             savePressed(bookmarkedUsers)
 
-            await bookmarkPosts(bookmarkedUsers, videoID, user)
+            await bookmarkPosts(bookmarkedUsers, videoID, user.$id)
 
             Alert.alert('Success', msg)
         } catch (error) {
@@ -96,7 +96,7 @@ const VideoCard = React.memo(({ video: { $id: videoID, title, thumbnail, thumbna
                             <MenuOption onSelect={() => savePost()}>
                                 <TextWithIcon
                                     icon={icons.bookmark}
-                                    title={bookmarked.some(usr => usr.$id === user.$id) ? "UnSave" : "Save"}
+                                    title={bookmarked.some(usr => usr === user.$id) ? "UnSave" : "Save"}
                                 />
                             </MenuOption>
                             {user?.$id === $id ? (<MenuOption onSelect={() => deletePostConfirmation()} >
