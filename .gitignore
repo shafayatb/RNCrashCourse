@@ -33,9 +33,7 @@ yarn-error.*
 
 # local env files
 .env*.local
+config.env
 
 # typescript
 *.tsbuildinfo
-
-#files
-lib/appwrite.js
