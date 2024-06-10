@@ -120,7 +120,7 @@ const VideoCard = React.memo(
                   <TextWithIcon
                     icon={icons.bookmark}
                     title={
-                      bookmarked.some((usr) => usr === user.$id)
+                      bookmarked.some((usr) => usr === user?.$id)
                         ? "UnSave"
                         : "Save"
                     }
