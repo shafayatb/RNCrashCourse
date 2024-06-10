@@ -27,5 +27,5 @@ export default {
   logout,
   eyeHide,
   eye,
-  deleteIcon
+  deleteIcon,
 };

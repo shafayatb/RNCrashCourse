@@ -1,54 +1,61 @@
-import { View, Text, FlatList, Image, RefreshControl } from 'react-native'
-import React, { useState } from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { images } from '../../constants';
-import SearchInput from '../../components/SearchInput';
-import Trending from '../../components/Trending';
-import EmptyState from '../../components/EmptyState';
-import { getAllPosts, getLatestPosts } from '../../lib/appWriteVideos';
-import useAppWrite from '../../lib/useAppWrite';
-import VideoCard from '../../components/VideoCard';
-import { useGlobalContext } from '../../context/GlobalProvider';
+import { View, Text, FlatList, Image, RefreshControl } from "react-native";
+import React, { useState } from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { images } from "../../constants";
+import SearchInput from "../../components/SearchInput";
+import Trending from "../../components/Trending";
+import EmptyState from "../../components/EmptyState";
+import { getAllPosts, getLatestPosts } from "../../lib/appWriteVideos";
+import useAppWrite from "../../lib/useAppWrite";
+import VideoCard from "../../components/VideoCard";
+import { useGlobalContext } from "../../context/GlobalProvider";
 
 const Home = () => {
   const { user } = useGlobalContext();
 
-  const { data: posts, refetch: postRefecth, setData: setPostData } = useAppWrite(getAllPosts);
+  const {
+    data: posts,
+    refetch: postRefecth,
+    setData: setPostData,
+  } = useAppWrite(getAllPosts);
 
-  const { data: latestPosts, refetch: latestRefetch, setData: setLatestPostData } = useAppWrite(getLatestPosts);
+  const {
+    data: latestPosts,
+    refetch: latestRefetch,
+    setData: setLatestPostData,
+  } = useAppWrite(getLatestPosts);
 
   const [refreshing, setRefreshing] = useState(false);
-
 
   const onRefresh = async () => {
     setRefreshing(true);
     await postRefecth();
     await latestRefetch();
     setRefreshing(false);
-  }
+  };
 
   const updateBookmarkedItemInList = (item, bookmarked) => {
     setPostData((data) => {
-      return data.map(post =>
+      return data.map((post) =>
         post.$id === item.$id ? { ...post, bookmarked } : post
-      )
-    })
-  }
+      );
+    });
+  };
 
   const removeDeletedPostFromList = async (item) => {
     try {
       setPostData((data) => {
-        return data.filter((post) => post.$id !== item.$id)
-      })
+        return data.filter((post) => post.$id !== item.$id);
+      });
       setLatestPostData((data) => {
-        return data.filter((post) => post.$id !== item.$id)
-      })
+        return data.filter((post) => post.$id !== item.$id);
+      });
       await latestRefetch();
     } catch (error) {
       console.log(error);
       throw new Error(error);
     }
-  }
+  };
 
   return (
     <SafeAreaView className="bg-primary h-full">
@@ -58,7 +65,9 @@ const Home = () => {
         renderItem={({ item }) => (
           <VideoCard
             video={item}
-            savePressed={(bookmarked) => updateBookmarkedItemInList(item, bookmarked)}
+            savePressed={(bookmarked) =>
+              updateBookmarkedItemInList(item, bookmarked)
+            }
             deletePressed={() => removeDeletedPostFromList(item)}
           />
         )}
@@ -78,7 +87,7 @@ const Home = () => {
                 <Image
                   source={images.logoSmall}
                   className="w-9 h-10"
-                  resizeMode='contain'
+                  resizeMode="contain"
                 />
               </View>
             </View>
@@ -90,9 +99,7 @@ const Home = () => {
                 Latest Videos
               </Text>
 
-              <Trending
-                posts={latestPosts ?? []}
-              />
+              <Trending posts={latestPosts ?? []} />
             </View>
           </View>
         )}
@@ -103,14 +110,11 @@ const Home = () => {
           />
         )}
         refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-          />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       />
     </SafeAreaView>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;

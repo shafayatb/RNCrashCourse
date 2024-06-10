@@ -1,11 +1,11 @@
-import { StatusBar } from 'expo-status-bar';
-import { Image, ScrollView, Text, View } from 'react-native';
-import { Redirect, router } from 'expo-router';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { images } from '../constants';
-import CustomButton from '../components/CustomButton';
-import Loader from '../components/Loader';
-import { useGlobalContext } from '../context/GlobalProvider';
+import { StatusBar } from "expo-status-bar";
+import { Image, ScrollView, Text, View } from "react-native";
+import { Redirect, router } from "expo-router";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { images } from "../constants";
+import CustomButton from "../components/CustomButton";
+import Loader from "../components/Loader";
+import { useGlobalContext } from "../context/GlobalProvider";
 
 export default function App() {
   const { isLoading, isLoggedIn } = useGlobalContext();
@@ -14,10 +14,12 @@ export default function App() {
     <SafeAreaView className="bg-primary h-full">
       <Loader isLoading={isLoading} />
 
-      <ScrollView contentContainerStyle={{
-        height: '100%'
-      }}>
-        <View className="w-full justify-center items-center min-h-[85vh] px-4" >
+      <ScrollView
+        contentContainerStyle={{
+          height: "100%",
+        }}
+      >
+        <View className="w-full justify-center items-center min-h-[85vh] px-4">
           <Image
             source={images.logo}
             className="w-[130px] h-[84px]"
@@ -30,10 +32,8 @@ export default function App() {
           />
           <View className="relative mt-5">
             <Text className="text-3xl text-white font-bold text-center">
-              Welcome to the{' '}
-              <Text className="text-secondary-200">
-                CrashCourse
-              </Text>
+              Welcome to the{" "}
+              <Text className="text-secondary-200">CrashCourse</Text>
             </Text>
 
             <Image
@@ -50,20 +50,15 @@ export default function App() {
           <CustomButton
             title="Continue to Learn More"
             handlePress={() => {
-              router.push('/sign-in')
+              router.push("/sign-in");
             }}
             containeStyles="w-full mt-7"
           />
-
         </View>
       </ScrollView>
 
-      <StatusBar backgroundColor="#161622" style='light' />
-      {!isLoading && isLoggedIn ? (
-        <Redirect href={"/home"} />
-      ) : (<></>)
-
-      }
+      <StatusBar backgroundColor="#161622" style="light" />
+      {!isLoading && isLoggedIn ? <Redirect href={"/home"} /> : <></>}
     </SafeAreaView>
   );
 }
